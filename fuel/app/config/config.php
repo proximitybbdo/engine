@@ -11,7 +11,12 @@
  */
 
 return array(
-
+	
+	/**
+	 * password_salt - Salt used for hashing passwords
+	 */
+	'password_salt' => 'to_salty_my_friend',
+	
 	/**
 	 * base_url - The base URL of the application.
 	 * MUST contain a trailing slash (/)
@@ -100,7 +105,7 @@ return array(
 	 * Fuel::L_INFO
 	 * Fuel::L_ALL
 	 */
-	'log_threshold'    => Fuel::L_WARNING,
+	'log_threshold'    => Fuel::L_NONE,
 	'log_path'         => APPPATH.'logs/',
 	'log_date_format'  => 'Y-m-d H:i:s',
 
