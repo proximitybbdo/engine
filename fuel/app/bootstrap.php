@@ -11,6 +11,8 @@ require COREPATH.'bootstrap.php';
 Autoloader::add_classes(array(
 	// Add classes you want to override here
 	// Example: 'View' => APPPATH.'classes/view.php',
+	'Uri' => APPPATH.'classes/ext/uri.php',
+	'Helper' => APPPATH.'classes/helpers/helper.php',
 ));
 
 // Register the autoloader
