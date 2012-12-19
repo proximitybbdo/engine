@@ -1,10 +1,15 @@
 #Engine
 
+A Fuel PHP setup by Proximity BBDO
 
-## Description
+## Installation
 
-A fuel php installation for proximity
+The repo links to the official FuelPHP submodules, to clone the full repo:
+    git clone --recursive git@github.com:proximitybbdo/engine.git
 
-##Development Team
+**Important**: the `--recursive` flag is mandatory to get all the submodules!
 
-* Proximity team …
+Alternatively, you can just `git clone` the repo and perform:
+
+    git submodule init 
+    git submodule update
