@@ -14,3 +14,7 @@ nbproject/
 .idea
 
 /fuel/app/config/crypt.php
+DEVELOPMENT
+STAGE
+PRODUCTION
+TEST
