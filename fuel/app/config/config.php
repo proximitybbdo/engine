@@ -46,7 +46,7 @@ return array(
 	 *
 	 * Set this to false or remove if you using mod_rewrite.
 	 */
-	'index_file'  => 'index.php',
+	'index_file'  => '',
 
 	'profiling'  => false,
 
@@ -80,9 +80,9 @@ return array(
 	/**
 	 * Localization & internationalization settings
 	 */
-	'language'           => 'en', // Default language
-	'language_fallback'  => 'en', // Fallback language when file isn't available for default language
-	'locale'             => 'en_US', // PHP set_locale() setting, null to not set
+	'language'           => 'nl-BE', // Default language
+	'language_fallback'  => 'nl-BE', // Fallback language when file isn't available for default language
+	'locale'             => 'nl_BE', // PHP set_locale() setting, null to not set
 
 	'encoding'  => 'UTF-8',
 
