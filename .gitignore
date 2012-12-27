@@ -14,9 +14,14 @@ nbproject/
 .idea
 
 fuel/app/config/**/migrations.php
+fuel/app/config/crypt.php
 
-/fuel/app/config/crypt.php
 DEVELOPMENT
 STAGE
 PRODUCTION
 TEST
+
+!fuel/app/*/DEVELOPMENT
+!fuel/app/*/STAGE
+!fuel/app/*/PRODUCTION
+!fuel/app/*/TEST
