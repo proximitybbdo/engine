@@ -19,17 +19,17 @@
 
   <?= Asset::css('style.css'); ?>
 
-  <?= Asset::js('libs/modernizr-2.6.1.min.js'); ?>
+  <?= Asset::js('vendor/modernizr-2.6.2.min.js'); ?>
 </head>
 <body>
 
   <?= $content; ?>
 
-  <script src="//code.jquery.com/jquery-1.8.1.min.js"></script>
-  <script>window.jQuery || document.write('<script src="<?= Asset::get_file('libs/jquery-1.8.1.min.js', 'js'); ?>"><\/script>')</script>
+  <script src="//code.jquery.com/jquery-1.8.3.min.js"></script>
+  <script>window.jQuery || document.write('<script src="<?= Asset::get_file('libs/jquery-1.8.3.min.js', 'js'); ?>"><\/script>')</script>
 
-  <!--[if (gte IE 6)&(lte IE 8)]><?= Asset::js('libs/selectivizr.js'); ?><![endif]-->	
-  <?= Asset::js('tracking.min.js'); ?>
+  <!--[if (gte IE 6)&(lte IE 8)]><?= Asset::js('vendor/selectivizr.js'); ?><![endif]-->	
+  <?= Asset::js('lib/tracking.min.js'); ?>
   <?= Asset::js('base.min.js'); ?>
 
   <script>
