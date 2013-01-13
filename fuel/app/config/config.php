@@ -11,12 +11,18 @@
  */
 
 return array(
-	
+
+	/**
+	 * ga_code - Ga code that gets iported in the template file
+	 * SHOULD BE Overridden by the real ga code in production config
+	 */
+	'ga_code' => "xxxxxxxxxxxxx",
+
 	/**
 	 * password_salt - Salt used for hashing passwords
 	 */
 	'password_salt' => 'to_salty_my_friend',
-	
+
 	/**
 	 * base_url - The base URL of the application.
 	 * MUST contain a trailing slash (/)

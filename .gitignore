@@ -7,6 +7,9 @@ desktop.ini
 .project
 .settings
 *.tmproj
+*.sublime-project
+*.sublime-workspace
+*.xiki
 fuel/app/logs/*/*/*
 fuel/app/cache/*/*
 build
