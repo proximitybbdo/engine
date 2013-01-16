@@ -13,6 +13,7 @@ require COREPATH.'bootstrap.php';
 Autoloader::add_classes(array(
 	// Add classes you want to override here
 	// Example: 'View' => APPPATH.'classes/view.php',
+  'Asset' => APPPATH.'classes/ext/asset.php',
 	'Uri' => APPPATH.'classes/ext/uri.php',
 	'Helper' => APPPATH.'classes/helpers/helper.php',
 ));
@@ -47,7 +48,7 @@ function get_env() {
       return strtolower($state);
     }
   }
-  
+
   return strtolower($env);
 }
 

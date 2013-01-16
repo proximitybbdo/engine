@@ -11,12 +11,17 @@
  */
 
 return array(
-	
+
+	/**
+	 * minifies_production_js - This setting minifies all js files in production mode
+	 */
+	'minifies_production_js' => true,
+
 	/**
 	 * password_salt - Salt used for hashing passwords
 	 */
 	'password_salt' => 'to_salty_my_friend',
-	
+
 	/**
 	 * base_url - The base URL of the application.
 	 * MUST contain a trailing slash (/)
