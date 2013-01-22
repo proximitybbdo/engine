@@ -13,7 +13,7 @@ class Controller_Default extends Controller_Base
 	public function get_index() {
     $data = array();
 
-    $this->template->content = View::forge('index', $data);	
+    $this->template->content = View::forge('index', $data);
 	}
 
 	/**
