@@ -1,5 +1,6 @@
 <?php
-  
 return array(
-	'profiling'  => false,
+  'profiling'  => false,
+  'ga_code' => "xxxxxxxxxxxxx",
+  'minify_js' => false,
 );

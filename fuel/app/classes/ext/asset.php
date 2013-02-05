@@ -14,7 +14,7 @@ class Asset extends \Fuel\Core\Asset {
 	 * @return	string
 	 */
 	public static function js($scripts = array(), $attr = array(), $group = NULL, $raw = false) {
-		if(Fuel::$env == "production" && Config::get("minifies_production_js")) {
+		if(Config::get("minify_js")) {
 			$scripts = str_replace(".js", ".min.js", $scripts);
 		}
 		return static::instance()->js($scripts, $attr, $group, $raw);
