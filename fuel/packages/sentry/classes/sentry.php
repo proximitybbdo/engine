@@ -1,14 +1,4 @@
 <?php
-/**
- * Fuel is a fast, lightweight, community driven PHP5 framework.
- *
- * @package    Fuel
- * @version    1.0
- * @author     Fuel Development Team
- * @license    MIT License
- * @copyright  2010 - 2011 Fuel Development Team
- * @link       http://fuelphp.com
- */
 
 namespace Sentry;
 
@@ -32,23 +22,19 @@ class Sentry {
    */
   protected static $client = null;
 
-  /**
-   * @var Raven_ErrorHandler
-   */
-  protected static $error_handler = null;
-
 	/**
 	 * Init, config loading.
 	 */
 	public static function _init() {
 		\Config::load('sentry', true);
-    self::$client = new \Raven_Client(\Config::get('sentry.dns'));
 
-    if(\Fuel::$env !== \Fuel::DEVELOPMENT && \Config::get('sentry.overwrite_error_handlers', false) === true) {
-      self::$error_handler = new \Raven_ErrorHandler(self::$client);
-      set_error_handler(array(self::$error_handler, 'handleError'));
-      set_exception_handler(array(self::$error_handler, 'handleException'));
+    self::$client = new \Raven_Client(\Config::get('dns'));
+
+    if(!\Package::loaded('log')) {
+      \Package::load('log');
     }
+
+    \Log\Log::instance()->pushHandler(new \Monolog\Handler\RavenHandler(self::$client)); 
 	}
 
 	/**
@@ -56,23 +42,13 @@ class Sentry {
 	 */
 	final private function __construct() {}
 
-  /**
-   * Send log to Sentry
-   *
-	 * @param	string	$message		message to log
-   */
-  public static function log($message) {
-    self::$client->captureMessage($message);
-  }
-
-  /**
-   * Send an exception to Sentry
-   *
-	 * @param	object	$e		exception to log
-   */
-  public static function exception($e) {
-    self::$client->captureException($e);
-  }
+	/**
+	 * Return the Sentry instance
+	 */
+	public static function instance()
+	{
+		return static::$instance;
+	}
 }
 
 /* end of file sentry.php */

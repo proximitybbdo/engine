@@ -13,7 +13,7 @@ class Raven_Stacktrace
         'require_once',
     );
 
-    public static function get_stack_info($frames, $trace=false)
+    public static function get_stack_info($frames, $trace=false, $shiftvars=true, $errcontext = null)
     {
         /**
          * PHP's way of storing backstacks seems bass-ackwards to me
@@ -21,11 +21,11 @@ class Raven_Stacktrace
          * called, so we have to shift 'function' down by 1. Ugh.
          */
         $result = array();
-        for ($i = 0; $i < count($frames) - 1; $i++) {
+        for ($i = 0; $i < count($frames); $i++) {
             $frame = $frames[$i];
             $nextframe = @$frames[$i + 1];
 
-            if (!isset($frame['file'])) {
+            if (!array_key_exists('file', $frame)) {
                 // XXX: Disable capturing of anonymous functions until we can implement a better grouping mechanism.
                 // In our examples these generally didnt help with debugging as the information was found elsewhere
                 // within the exception or the stacktrace
@@ -60,16 +60,25 @@ class Raven_Stacktrace
                 $module .= ':' . $nextframe['class'];
             }
 
-            if ($trace) {
-                $vars = self::get_frame_context($nextframe);
+            if (empty($result) && isset($errcontext)) {
+                // If we've been given an error context that can be used as the vars for the first frame.
+                $vars = $errcontext;
             } else {
-                $vars = array();
+                if ($trace) {
+                    if ($shiftvars) {
+                        $vars = self::get_frame_context($nextframe);
+                    } else {
+                        $vars = self::get_caller_frame_context($frame);
+                    }
+                } else {
+                    $vars = array();
+                }
             }
 
             $result[] = array(
                 'abs_path' => $abs_path,
                 'filename' => $context['filename'],
-                'lineno' => $context['lineno'],
+                'lineno' => (int) $context['lineno'],
                 'module' => $module,
                 'function' => $nextframe['function'],
                 'vars' => $vars,
@@ -80,6 +89,22 @@ class Raven_Stacktrace
         }
 
         return array_reverse($result);
+    }
+
+    public static function get_caller_frame_context($frame)
+    {
+        if (!isset($frame['args'])) {
+            return array();
+        }
+
+        $i = 1;
+        $args = array();
+        foreach ($frame['args'] as $arg) {
+            $args['param'.$i] = $arg;
+            $i++;
+        }
+        return $args;
+
     }
 
     public static function get_frame_context($frame)
@@ -109,6 +134,8 @@ class Raven_Stacktrace
         if (isset($frame['class'])) {
             if (method_exists($frame['class'], $frame['function'])) {
                 $reflection = new ReflectionMethod($frame['class'], $frame['function']);
+            } elseif ($frame['type'] === '::') {
+                $reflection = new ReflectionMethod($frame['class'], '__callStatic');
             } else {
                 $reflection = new ReflectionMethod($frame['class'], '__call');
             }
@@ -158,33 +185,29 @@ class Raven_Stacktrace
         }
 
 
-        // Try to open the file. We wrap this in a try/catch block in case
-        // someone has modified the error_trigger to throw exceptions.
         try {
-            $fh = fopen($filename, 'r');
-            if ($fh === false) {
-                return $frame;
-            }
-        } catch (ErrorException $exc) {
+            $file = new SplFileObject($filename);
+            $target = max(0, ($lineno - ($context_lines + 1)));
+            $file->seek($target);
+            $cur_lineno = $target+1;
+            while (!$file->eof()) {
+                $line = rtrim($file->current(), "\r\n");
+                if ($cur_lineno == $lineno) {
+                    $frame['line'] = $line;
+                } elseif ($cur_lineno < $lineno) {
+                    $frame['prefix'][] = $line;
+                } elseif ($cur_lineno > $lineno) {
+                    $frame['suffix'][] = $line;
+                }
+                $cur_lineno++;
+                if ($cur_lineno > $lineno + $context_lines) {
+                    break;
+                }
+                $file->next();
+             }
+        } catch (RuntimeException $exc) {
             return $frame;
         }
-
-        $line = false;
-        $cur_lineno = 0;
-
-        while (!feof($fh)) {
-            $cur_lineno++;
-            $line = rtrim(fgets($fh), "\r\n");
-
-            if ($cur_lineno == $lineno) {
-                $frame['line'] = $line;
-            } elseif ($lineno - $cur_lineno > 0 && $lineno - $cur_lineno <= ($context_lines + 1)) {
-                $frame['prefix'][] = $line;
-            } elseif ($lineno - $cur_lineno >= -$context_lines && $lineno - $cur_lineno < 0) {
-                $frame['suffix'][] = $line;
-            }
-        }
-        fclose($fh);
 
         return $frame;
     }

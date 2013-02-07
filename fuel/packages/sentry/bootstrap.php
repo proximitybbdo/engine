@@ -8,5 +8,11 @@ Autoloader::add_classes(array(
 
 // Raven dependency
 require(__DIR__ . '/vendor/Raven/Autoloader.php');
-
 Raven_Autoloader::register();
+
+// Load
+\Config::load('sentry');
+
+if(\Config::get('autoload')) {
+  \Sentry::instance();
+}

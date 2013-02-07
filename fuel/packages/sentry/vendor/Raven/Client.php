@@ -17,7 +17,7 @@
 
 class Raven_Client
 {
-    const VERSION = '0.1.0';
+    const VERSION = '0.4.0';
 
     const DEBUG = 'debug';
     const INFO = 'info';
@@ -54,7 +54,10 @@ class Raven_Client
         $this->site = Raven_Util::get($options, 'site', $this->_server_variable('SERVER_NAME'));
         $this->tags = Raven_Util::get($options, 'tags', array());
         $this->trace = (bool) Raven_Util::get($options, 'trace', true);
+        $this->timeout = Raven_Util::get($options, 'timeout', 5);
+        $this->exclude = Raven_Util::get($options, 'exclude', array());
         $this->severity_map = NULL;
+        $this->shift_vars = (bool) Raven_Util::get($options, 'shift_vars', true);
 
         // XXX: Signing is disabled by default as it is no longer required by modern versions of Sentrys
         $this->signing = (bool) Raven_Util::get($options, 'signing', false);
@@ -132,9 +135,9 @@ class Raven_Client
      * Deprecated
      */
     public function message($message, $params=array(), $level=self::INFO,
-                            $stack=false)
+                            $stack=false, $vars = null)
     {
-        return $this->captureMessage($message, $params, $level, $stack);
+        return $this->captureMessage($message, $params, $level, $stack, $vars);
     }
 
     /**
@@ -149,7 +152,7 @@ class Raven_Client
      * Log a message to sentry
      */
     public function captureMessage($message, $params=array(), $level_or_options=array(),
-                            $stack=false)
+                            $stack=false, $vars = null)
     {
         // Gracefully handle messages which contain formatting characters, but were not
         // intended to be used with formatting.
@@ -175,14 +178,18 @@ class Raven_Client
             'params' => $params,
         );
 
-        return $this->capture($data, $stack);
+        return $this->capture($data, $stack, $vars);
     }
 
     /**
      * Log an exception to sentry
      */
-    public function captureException($exception, $culprit_or_options=null, $logger=null)
+    public function captureException($exception, $culprit_or_options=null, $logger=null, $vars=null)
     {
+        if (in_array(get_class($exception), $this->exclude)) {
+            return null;
+        }
+
         $exc_message = $exception->getMessage();
         if (empty($exc_message)) {
             $exc_message = '<unknown exception>';
@@ -228,7 +235,26 @@ class Raven_Client
 
         array_unshift($trace, $frame_where_exception_thrown);
 
-        return $this->capture($data, $trace);
+        return $this->capture($data, $trace, $vars);
+    }
+
+    /**
+     * Log an query to sentry
+     */
+    public function captureQuery($query, $level=self::INFO, $engine = '')
+    {
+        $data = array(
+            'message' => $query,
+            'level' => $level,
+            'sentry.interfaces.Query' => array(
+                'query' => $query
+            )
+        );
+
+        if ($engine !== '') {
+            $data['sentry.interfaces.Query']['engine'] = $engine;
+        }
+        return $this->capture($data, false);
     }
 
     private function is_http_request()
@@ -238,15 +264,30 @@ class Raven_Client
 
     protected function get_http_data()
     {
+        $env = $headers = array();
+
+        foreach ($_SERVER as $key => $value) {
+            if (0 === strpos($key, 'HTTP_')) {
+                if (in_array($key, array('HTTP_CONTENT_TYPE', 'HTTP_CONTENT_LENGTH'))) {
+                    continue;
+                }
+                $headers[str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($key, 5)))))] = $value;
+            } elseif (in_array($key, array('CONTENT_TYPE', 'CONTENT_LENGTH'))) {
+                $headers[str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', $key))))] = $value;
+            } else {
+                $env[$key] = $value;
+            }
+        }
+
         return array(
             'sentry.interfaces.Http' => array(
                 'method' => $this->_server_variable('REQUEST_METHOD'),
                 'url' => $this->get_current_url(),
-                'query_string' => $this->_server_variable('QUERY_STRNG'),
+                'query_string' => $this->_server_variable('QUERY_STRING'),
                 'data' => $_POST,
                 'cookies' => $_COOKIE,
-                'headers' => getallheaders(),
-                'env' => $_SERVER,
+                'headers' => $headers,
+                'env' => $env,
             )
         );
     }
@@ -267,7 +308,7 @@ class Raven_Client
         return array();
     }
 
-    public function capture($data, $stack)
+    public function capture($data, $stack, $vars = null)
     {
         $event_id = $this->uuid4();
 
@@ -298,7 +339,7 @@ class Raven_Client
         if (!empty($stack)) {
             if (!isset($data['sentry.interfaces.Stacktrace'])) {
                 $data['sentry.interfaces.Stacktrace'] = array(
-                    'frames' => Raven_Stacktrace::get_stack_info($stack, $this->trace),
+                    'frames' => Raven_Stacktrace::get_stack_info($stack, $this->trace, $this->shift_vars, $vars),
                 );
             }
         }
@@ -392,6 +433,8 @@ class Raven_Client
         curl_setopt($curl, CURLOPT_VERBOSE, false);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($curl, CURLOPT_CONNECTTIMEOUT_MS, $this->timeout * 1000);
+        curl_setopt($curl, CURLOPT_TIMEOUT_MS, $this->timeout * 1000);
         $ret = curl_exec($curl);
         $code = curl_getinfo($curl, CURLINFO_HTTP_CODE);
         $success = ($code == 200);
@@ -504,8 +547,12 @@ class Raven_Client
             case E_USER_NOTICE:        return Raven_Client::INFO;
             case E_STRICT:             return Raven_Client::INFO;
             case E_RECOVERABLE_ERROR:  return Raven_Client::ERROR;
+        }
+        if (version_compare(PHP_VERSION, '5.3.0', '>=')) {
+          switch ($severity) {
             case E_DEPRECATED:         return Raven_Client::WARN;
             case E_USER_DEPRECATED:    return Raven_Client::WARN;
+          }
         }
         return Raven_Client::ERROR;
     }
