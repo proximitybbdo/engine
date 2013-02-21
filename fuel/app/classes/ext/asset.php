@@ -21,7 +21,7 @@ class Asset extends \Fuel\Core\Asset {
         $min = str_replace(".js", ".min.js", $script);
 
         if(file_exists(DOCROOT . 'assets/js/' . $min)) {
-          $scripts[$key] = $min;
+          $scripts[$id] = $min;
         }
       }
     }
