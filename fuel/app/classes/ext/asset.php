@@ -15,29 +15,17 @@ class Asset extends \Fuel\Core\Asset {
 	 */
   public static function js($scripts = array(), $attr = array(), $group = NULL, $raw = false) {
     if(Config::get("minify_js")) {
-      if(is_array($scripts)) {
-        $files = [];
+      $scripts = !is_array($scripts) ? array($scripts) : $scripts;
 
-        foreach($scripts as $script) {
-          $min = static::_create_minified($script);
-          $files[] = static::_has_minified($min) ? $min : $script;
+      foreach($scripts as $id => $script) {
+        $min = str_replace(".js", ".min.js", $script);
+
+        if(file_exists(DOCROOT . 'assets/js/' . $min)) {
+          $scripts[$key] = $min;
         }
-
-        $scripts = $files;
-      } else {
-        $min = static::_create_minified($scripts);
-        $scripts = static::_has_minified($min) ? $min : $scripts;
       }
     }
 
 		return static::instance()->js($scripts, $attr, $group, $raw);
-  }
-
-  private static function _create_minified($file) {
-    return str_replace(".js", ".min.js", $file);
-  }
-
-  private static function _has_minified($file) {
-    return file_exists(DOCROOT . 'assets/js/' . $file);
   }
 }
