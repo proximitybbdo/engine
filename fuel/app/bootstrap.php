@@ -16,6 +16,7 @@ Autoloader::add_classes(array(
   'Asset' => APPPATH.'classes/ext/asset.php',
 	'Uri' => APPPATH.'classes/ext/uri.php',
 	'Helper' => APPPATH.'classes/helpers/helper.php',
+	'Response' => APPPATH.'classes/ext/response.php',
 ));
 
 // Register the autoloader

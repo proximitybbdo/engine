@@ -8,6 +8,12 @@ class Controller_Default extends Controller_Base
 {
   public function before() {
     parent::before();
+
+    Lang::load('site.yml', null, null, true);
+  }
+
+  public function get_channel() {
+    return new Response('<script src="//connect.facebook.net/nl_BE/all.js"></script>');
   }
 
 	public function get_index() {

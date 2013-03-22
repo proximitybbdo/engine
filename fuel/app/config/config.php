@@ -2,6 +2,20 @@
 
 return array(
   /**
+   * Admin
+   */
+  'admin' => array(
+    'username' => '',
+    'password' => '',
+    'email' => '',
+  ),
+
+  /**
+   * Minify setting, functionality can be found in fuel/app/classes/ext/asset.php
+   */
+  'minify_js' => false,
+
+  /**
    * index_file - The name of the main bootstrap file.
    *
    * Set this to false or remove if you using mod_rewrite.
@@ -18,7 +32,7 @@ return array(
    */
   'language'           => 'nl-BE', // Default language
   'language_fallback'  => 'nl-BE', // Fallback language when file isn't available for default language
-  'locale'             => 'nl_BE', // PHP set_locale() setting, null to not set
+  'locale'             => 'dutch,nl_NL', // PHP set_locale() setting, null to not set
 
   'encoding'  => 'UTF-8',
 

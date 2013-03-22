@@ -12,7 +12,7 @@ return array(
       'database'      => 'DB',
       'username'      => 'USER',
       'password'      => 'PASS',
-      'persistent'    => false,//For testing maybe this can be put on true?
+      'persistent'    => false, // For testing maybe this can be put on true?
       'compress'      => true
     ),
     'identifier'   => '`',

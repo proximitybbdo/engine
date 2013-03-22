@@ -18,7 +18,7 @@ return array(
     'identifier'   => '`',
     'table_prefix' => '',
     'charset'     => 'utf8',
-    'enable_cache' => true,//enable query caching on Production
+    'enable_cache' => true, // enable query caching on Production
     'profiling'   => false,
   ),
 );

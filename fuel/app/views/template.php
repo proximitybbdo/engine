@@ -11,7 +11,7 @@
     <meta name="e" content="<?= substr(Fuel::$env, 0, 1); ?>" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <title>ProximityBBDOWebFramework</title>
+    <title><?= __('title'); ?></title>
 
     <link rel="shortcut icon" href="<?= Asset::get_file('favicon.png', 'img', 'icon/'); ?>" />
     <link rel="apple-touch-icon" href="<?= Asset::get_file('apple-touch-icon.png', 'img', 'icon/'); ?>" />
@@ -19,7 +19,12 @@
 
     <?= Asset::js('vendor/modernizr.js'); ?>
   </head>
-  <body>
+  <body data-page="<?= Uri::segments_clean(); ?>">
+    <script type="text/javascript">
+      window.site = {};
+      window.site.lang = '<?= \Session::get('language'); ?>';
+      window.site.base_url = '<?= Uri::create_lang(''); ?>';
+    </script>
 
     <?= $content; ?>
 
