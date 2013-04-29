@@ -55,7 +55,7 @@ return array(
    * Fuel::L_INFO
    * Fuel::L_ALL
    */
-  'log_threshold'    => Fuel::L_NONE,
+  'log_threshold'    => Fuel::L_WARNING,
 
   /**
    * Security settings
