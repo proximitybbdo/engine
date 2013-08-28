@@ -64,7 +64,7 @@ return array(
     'csrf_autoload'   => false,
     'uri_filter'      => array(),
     'input_filter'    => array(),
-    'output_filter'   => array(),
+    'output_filter'   => array('Security::htmlentities'),
     /**
      * With output encoding switched on all objects passed will be converted to strings or
      * throw exceptions unless they are instances of the classes in this array.
