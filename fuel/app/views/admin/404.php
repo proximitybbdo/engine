@@ -3,7 +3,7 @@
   <head>
   <meta charset="utf-8">
 
-  <title>Proximity BBDO</title>
+  <title>BBDO</title>
 
   <?php echo Asset::css('bootstrap.min.css'); ?>
   <style type="text/css">
@@ -51,15 +51,15 @@
       <hr>
 
       <footer>
-        <p>&copy; Proximity BBDO 2013</p>
+        <p>&copy; BBDO 2013</p>
       </footer>
     </form>
 
   </div>
 
   <?= Asset::js(array(
-    'vendor/jquery.js',
-    'vendor/bootstrap.js', 
+    'vendor/jquery.min.js',
+    'vendor/bootstrap.js',
   )); ?>
 </body>
 </html>
