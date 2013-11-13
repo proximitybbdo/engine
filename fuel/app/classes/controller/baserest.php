@@ -32,4 +32,3 @@ class Controller_Baserest extends Controller_Rest {
     }
   }
 }
-
