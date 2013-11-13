@@ -1,9 +1,13 @@
-<div class="container-fluid">
-  <div class="row-fluid">
+<div class="container">
+  <div class="row">
 
-    <div class="span3">
-      <div class="alert alert-success">
-      </div>
+    <div class="col-lg-3">
+    </div>
+
+    <div class="col-lg-3">
+    </div>
+
+    <div class="col-lg-6">
     </div>
 
   </div>
