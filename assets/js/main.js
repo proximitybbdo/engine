@@ -11,8 +11,11 @@
   BBDO.Site = (function() {
     Site.prototype.current_page = null;
 
-    function Site() {
-      this.route($('body[data-page]').attr('data-page'));
+    Site.prototype.$el = null;
+
+    function Site($el) {
+      this.$el = $el;
+      this.route(this.$el.data('page'));
       this.init_events();
       this.init_shared();
     }
@@ -41,7 +44,7 @@
   })();
 
   $(document).ready(function() {
-    return window.site.app = new BBDO.Site();
+    return window.site.app = new BBDO.Site($('body'));
   });
 
   BBDO.Base = (function() {

@@ -4,9 +4,10 @@ window.BBDO ?= {
 
 class BBDO.Site
   current_page: null
+  $el: null
 
-  constructor: ->
-    @route($('body[data-page]').attr('data-page'))
+  constructor: (@$el) ->
+    @route @$el.data('page')
 
     @init_events()
     @init_shared()
@@ -27,7 +28,7 @@ class BBDO.Site
   init_shared: ->
 
 $(document).ready ->
-  window.site.app = new BBDO.Site()
+  window.site.app = new BBDO.Site $('body')
 
 class BBDO.Base
   constructor: () ->
