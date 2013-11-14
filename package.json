@@ -1,0 +1,22 @@
+{
+  "author": "BBDO",
+  "name": "project-name",
+  "version": "0.0.1",
+  "dependencies": {
+  },
+  "devDependencies": {
+    "grunt": "~0.4.1",
+    "matchdep": "*",
+
+    "grunt-contrib-coffee": "*",
+    "grunt-contrib-compass": "*",
+    "grunt-contrib-watch": "*",
+    "grunt-contrib-imagemin": "*",
+    "grunt-contrib-clean": "*",
+    "grunt-concurrent": "*",
+    "grunt-contrib-concat": "*",
+    "grunt-contrib-uglify": "*",
+    "grunt-notify": "*",
+    "grunt-newer": "*"
+  }
+}
