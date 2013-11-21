@@ -1,6 +1,9 @@
 window.BBDO ?= {
-  Events: {},
+  Events: {}
 }
+
+String.prototype.capitalize = () ->
+  @charAt(0).toUpperCase() + @slice(1)
 
 class BBDO.Site
   current_page: null
@@ -19,13 +22,13 @@ class BBDO.Site
     document.location = window.base_url + page
 
   route: (page) ->
-    switch page
-      when ''
-        @current_page = new BBDO.Index()
-      else
-        @current_page = new BBDO.Base()
+    if page is "" then page = "index"
+    if typeof BBDO[page.capitalize()] is "function"
+      @current_page = new BBDO[page.capitalize()]()
+    else
+      @current_page = new BBDO.Base
 
   init_shared: ->
 
-$(document).ready ->
+$ ->
   window.site.app = new BBDO.Site $('body')

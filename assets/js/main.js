@@ -8,6 +8,10 @@
     };
   }
 
+  String.prototype.capitalize = function() {
+    return this.charAt(0).toUpperCase() + this.slice(1);
+  };
+
   BBDO.Site = (function() {
     Site.prototype.current_page = null;
 
@@ -29,11 +33,11 @@
     };
 
     Site.prototype.route = function(page) {
-      switch (page) {
-        case '':
-          return this.current_page = new BBDO.Index();
-        default:
-          return this.current_page = new BBDO.Base();
+      if (page === "") {
+        page = "index";
+      }
+      if (typeof BBDO[page.capitalize()] === "function") {
+        return this.current_page = new BBDO[page.capitalize()];
       }
     };
 
@@ -43,7 +47,7 @@
 
   })();
 
-  $(document).ready(function() {
+  $(function() {
     return window.site.app = new BBDO.Site($('body'));
   });
 
