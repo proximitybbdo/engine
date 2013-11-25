@@ -31,7 +31,7 @@
     <?= Asset::js(array(
       'vendor/jquery.js',
       'lib/tracking.js',
-      'base.js'
+      'main.js'
     )); ?>
 
     <script>
