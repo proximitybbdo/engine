@@ -1,8 +1,6 @@
 <?php
 /**
- * Part of the Fuel framework.
- *
- * @package    FuelPHP
+ * @package    Fuel\Upload
  * @version    2.0
  * @author     Fuel Development Team
  * @license    MIT License
@@ -10,7 +8,7 @@
  * @link       http://fuelphp.com
  */
 
-namespace FuelPHP\Upload;
+namespace Fuel\Upload;
 
 /**
  * Files is a container for a single uploaded file
@@ -77,6 +75,7 @@ class File implements \ArrayAccess, \Iterator, \Countable
 		'path_chmod'      => 0777,
 		'file_chmod'      => 0666,
 		'auto_rename'     => true,
+		'new_name'        => false,
 		'overwrite'       => false,
 	);
 
@@ -344,6 +343,14 @@ class File implements \ArrayAccess, \Iterator, \Countable
 				}
 			}
 
+			// was a hardcoded new name specified in the config?
+			if (array_key_exists('new_name', $this->config) and $this->config['new_name'] !== false)
+			{
+				$new_name = pathinfo($this->config['new_name']);
+				empty($new_name['filename']) or $this->container['filename'] = $new_name['filename'];
+				empty($new_name['extension']) or $this->container['extension'] = $new_name['extension'];
+			}
+
 			// array with all filename components
 			$filename = array(
 				$this->config['prefix'],
@@ -373,6 +380,7 @@ class File implements \ArrayAccess, \Iterator, \Countable
 			}
 
 			// if we're saving the file locally
+			$createdTempFile = false;
 			if ( ! $this->config['moveCallback'])
 			{
 				// check if the file already exists
@@ -390,6 +398,7 @@ class File implements \ArrayAccess, \Iterator, \Countable
 
 						// claim this generated filename before someone else does
 						touch($this->container['path'].implode('', $filename));
+						$createdTempFile = true;
 					}
 					else
 					{
@@ -462,8 +471,8 @@ class File implements \ArrayAccess, \Iterator, \Countable
 			}
 			else
 			{
-				// remove the temporary file we've created, make sure it exists first though!
-				if (file_exists($this->container['path'].$this->container['filename']))
+				// if we're auto renaming, remove the temporary file we've created, make sure it exists first though!
+				if ($createdTempFile)
 				{
 					unlink($this->container['path'].$this->container['filename']);
 				}
@@ -499,7 +508,7 @@ class File implements \ArrayAccess, \Iterator, \Countable
 				if (is_callable($callback))
 				{
 					// call the defined callback
-					$result = call_user_func($callback, $this);
+					$result = call_user_func_array($callback, array(&$this));
 
 					// and process the results. we need FileError instances only
 					foreach ((array) $result as $entry)

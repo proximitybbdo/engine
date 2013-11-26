@@ -1,8 +1,6 @@
 <?php
 /**
- * Part of the Fuel framework.
- *
- * @package    FuelPHP
+ * @package    Fuel\Upload
  * @version    2.0
  * @author     Fuel Development Team
  * @license    MIT License
@@ -10,7 +8,7 @@
  * @link       http://fuelphp.com
  */
 
-namespace FuelPHP\Upload;
+namespace Fuel\Upload;
 
 /**
  * Upload is a container for unified access to uploaded files
@@ -58,6 +56,7 @@ class Upload implements \ArrayAccess, \Iterator, \Countable
 		'path_chmod'      => 0777,
 		'file_chmod'      => 0666,
 		'auto_rename'     => true,
+		'new_name'        => false,
 		'overwrite'       => false,
 	);
 
@@ -255,7 +254,14 @@ class Upload implements \ArrayAccess, \Iterator, \Countable
 	public function getValidFiles($index = null)
 	{
 		// prepare the selection
-		$selection =  (func_num_args() and ! is_null($index)) ? $this[$index] : $this->container;
+		if (is_numeric($index))
+		{
+			$selection = $this->container;
+		}
+		else
+		{
+			$selection = (func_num_args() and ! is_null($index)) ? $this[$index] : $this->container;
+		}
 
 		// make sure selection is an array
 		is_array($selection) or $selection = array($selection);
@@ -271,7 +277,15 @@ class Upload implements \ArrayAccess, \Iterator, \Countable
 		}
 
 		// return the results
-		return $results;
+		if (is_numeric($index))
+		{
+			// a specific valid file was requested
+			return isset($results[$index]) ? array($results[$index]) : array();
+		}
+		else
+		{
+			return $results;
+		}
 	}
 
 	/**
@@ -284,7 +298,14 @@ class Upload implements \ArrayAccess, \Iterator, \Countable
 	public function getInvalidFiles($index = null)
 	{
 		// prepare the selection
-		$selection =  (func_num_args() and ! is_null($index)) ? $this[$index] : $this->container;
+		if (is_numeric($index))
+		{
+			$selection = $this->container;
+		}
+		else
+		{
+			$selection = (func_num_args() and ! is_null($index)) ? $this[$index] : $this->container;
+		}
 
 		// make sure selection is an array
 		is_array($selection) or $selection = array($selection);
@@ -300,7 +321,15 @@ class Upload implements \ArrayAccess, \Iterator, \Countable
 		}
 
 		// return the results
-		return $results;
+		if (is_numeric($index))
+		{
+			// a specific valid file was requested
+			return isset($results[$index]) ? array($results[$index]) : array();
+		}
+		else
+		{
+			return $results;
+		}
 	}
 
 	/**
