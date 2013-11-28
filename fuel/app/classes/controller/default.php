@@ -19,6 +19,10 @@ class Controller_Default extends Controller_Base
 	public function get_index() {
     $data = array();
 
+    if(true) {
+      $i->getProp();
+    }
+
     $this->template->content = View::forge('index', $data);
 	}
 

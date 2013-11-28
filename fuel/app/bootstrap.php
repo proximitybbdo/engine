@@ -57,3 +57,6 @@ Fuel::$env = (isset($_SERVER['FUEL_ENV']) ? $_SERVER['FUEL_ENV'] : get_env());
 
 // Initialize the framework with the config file.
 Fuel::init('config.php');
+
+// tmp logging test
+\Log::instance()->pushHandler(new \Monolog\Handler\HipChatHandler('da810ff260aad3261f243d2b8be613', '354869', 'Engine', false, \Monolog\Logger::DEBUG));
