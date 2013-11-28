@@ -9,7 +9,7 @@ return array(
   ),
 
   'email' => array(
-    'from' => 'engine@bbdo.be',
+    'from' => 'jeroen.bourgois@bbdo.be',
     'to' => array('jeroen.bourgois@bbdo.be', 'pieter.michels@bbdo.be'),
     'subject' => '[ALARM] - Engine'
   )
