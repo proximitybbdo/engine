@@ -1,5 +1,97 @@
 @charset "UTF-8"
+// ;
 
 @import "compass"
 @import "compass/reset"
 @import "compass/css3"
+@import "ceaser-easing"
+
+@import "vendor/_grid.scss"
+
+// variables
+
+$clr_blue_light: #4fa0cd
+
+//grid
+$total_width: 100%
+$total_columns: 12
+$container_margin: 1%
+$gutter_width: 0
+$max_width: 940px
+
+$font-size-xxs: 10px
+$font-size-xs: 12px
+$font-size-s: 14px
+$font-size-m: 16px
+$font-size-l: 24px
+$font-size-xl: 30px
+$font-size-xxl: 36px
+$font-size-xxxl: 48px
+
+// fonts
+
++font-face("NAME", font-files("FILENAME.woff", "FILENAME.ttf", "FILENAME.otf", "FILENAME.svg"), "FILENAME.eot")
+
+//mixins
+
+@mixin grid-container
+  +container
+  width: $total_width
+  max-width: $max_width
+  margin: 0 auto !important
+  margin-bottom: $gutter_width !important
+  +pie-clearfix
+
+@mixin subgrid
+  +container
+  margin: 0  !important
+  width: 100% !important
+  margin-bottom: $gutter_width !important
+  position: relative
+  +pie-clearfix
+
+@mixin centered-content-block
+  width: $max_width
+  margin: 0 auto
+
+@mixin animate($speed)
+  +transition-property(all)
+  +transition-duration($speed)
+  +transition-timing-function(cubic-bezier(0.680, -0.550, 0.265, 1.550))
+
+.content
+  +grid-container
+  position: relative
+
+.no-flick
+  +translate3d(0, 0, 0)
+
+//typo
+
+h1
+  font-size: $font-size-xxxl
+
+h2
+  font-size: $font-size-xxl
+
+h3
+  font-size: $font-size-xl
+
+h4
+  font-size: $font-size-l
+
+strong
+  font-weight: bold
+
+em
+  font-style: italic
+
+p
+  font-size: $font-size-m
+
+//building
+
+//pages
+
+//media-queries
+
